@@ -1,0 +1,1972 @@
+﻿<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>W&K Creation — Template e-commerce</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Playfair+Display:wght@700;800;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --couleur-primaire: #000000;
+      --couleur-secondaire: #C9A84C;
+      --couleur-bg: #FFFFFF;
+      --nom-boutique: "W&K Creation";
+      --whatsapp-vendeur: "+22500000000";
+      --fedapay-public-key: "VOTRE_CLE_FEDAPAY";
+      --texte: #1c1c1c;
+      --muted: #6d6d6d;
+      --surface: #fbfbfb;
+      --surface-contrast: #f5f5f5;
+      --border: rgba(0,0,0,0.08);
+      --shadow: rgba(0,0,0,0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      font-family: "DM Sans", sans-serif;
+      background: var(--couleur-bg);
+      color: var(--texte);
+      min-height: 100vh;
+    }
+
+    button,
+    input,
+    select,
+    textarea {
+      font: inherit;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    img {
+      max-width: 100%;
+      display: block;
+    }
+
+    .topbar {
+      background: var(--couleur-primaire);
+      color: #fff;
+      overflow: hidden;
+      height: 38px;
+      display: flex;
+      align-items: center;
+      position: relative;
+      font-size: 0.9rem;
+    }
+
+    .ticker {
+      display: inline-flex;
+      white-space: nowrap;
+      animation: scroll-annonce 18s linear infinite;
+      padding-left: 100%;
+    }
+
+    .ticker span {
+      padding-right: 3rem;
+    }
+
+    @keyframes scroll-annonce {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-100%); }
+    }
+
+    .site-header {
+      position: sticky;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 50;
+      background: rgba(255,255,255,0.96);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .header-inner {
+      max-width: 1220px;
+      margin: 0 auto;
+      padding: 0.95rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-family: 'Playfair Display', serif;
+      font-size: 1.2rem;
+      font-weight: 900;
+      letter-spacing: 0.05em;
+    }
+
+    .brand span {
+      color: var(--couleur-secondaire);
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 1.75rem;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .nav-links a {
+      font-size: 0.92rem;
+      font-weight: 600;
+      color: var(--texte);
+      transition: color 0.2s ease;
+    }
+
+    .nav-links a:hover,
+    .nav-links a.active {
+      color: var(--couleur-secondaire);
+    }
+
+    .cart-button {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.75rem 1rem;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: #fff;
+      color: var(--texte);
+      font-weight: 600;
+    }
+
+    .cart-count {
+      min-width: 1.8rem;
+      height: 1.8rem;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--couleur-secondaire);
+      color: #fff;
+      font-size: 0.8rem;
+    }
+
+    .burger {
+      display: none;
+      width: 2rem;
+      height: 2rem;
+      border: 1px solid var(--border);
+      border-radius: 0.75rem;
+      background: none;
+      cursor: pointer;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .burger span,
+    .burger span::before,
+    .burger span::after {
+      content: '';
+      display: block;
+      width: 1.1rem;
+      height: 2px;
+      background: var(--texte);
+      border-radius: 2px;
+    }
+
+    .burger span::before {
+      transform: translateY(-6px);
+    }
+
+    .burger span::after {
+      transform: translateY(4px);
+    }
+
+    .nav-open .nav-links {
+      display: flex;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background: #fff;
+      flex-direction: column;
+      padding: 1rem;
+      border-bottom: 1px solid var(--border);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.08);
+    }
+
+    .nav-open .nav-links a {
+      width: 100%;
+      padding: 0.75rem 0;
+    }
+
+    .cart-panel {
+      position: fixed;
+      inset: 0;
+      display: none;
+      z-index: 100;
+      pointer-events: none;
+    }
+
+    .cart-panel.active {
+      display: block;
+      pointer-events: auto;
+    }
+
+    .cart-panel-backdrop {
+      position: absolute;
+      inset: 0;
+      background: rgba(0,0,0,0.5);
+      backdrop-filter: blur(2px);
+    }
+
+    .cart-panel-content {
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: min(420px, 100%);
+      height: 100%;
+      background: #fff;
+      box-shadow: -20px 0 50px rgba(0,0,0,0.12);
+      padding: 1.5rem;
+      display: grid;
+      gap: 1rem;
+      overflow: hidden;
+    }
+
+    .cart-panel-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 1rem;
+    }
+
+    .cart-item-count {
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .cart-items {
+      overflow-y: auto;
+      display: grid;
+      gap: 1rem;
+      padding-right: 0.5rem;
+    }
+
+    .cart-item {
+      display: grid;
+      gap: 0.5rem;
+      border: 1px solid var(--border);
+      border-radius: 1.25rem;
+      padding: 1rem;
+      background: var(--surface);
+    }
+
+    .cart-item-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 0.5rem;
+      align-items: center;
+    }
+
+    .cart-item-name {
+      font-weight: 700;
+    }
+
+    .cart-item-meta {
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    .cart-item-remove {
+      border: none;
+      background: transparent;
+      color: #b91c1c;
+      cursor: pointer;
+      font-size: 0.9rem;
+      text-decoration: underline;
+      padding: 0;
+    }
+
+    .cart-panel-footer {
+      margin-top: auto;
+      display: grid;
+      gap: 1rem;
+    }
+
+    .cart-total {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-weight: 800;
+      font-size: 1rem;
+    }
+
+    .cart-empty {
+      color: var(--muted);
+      font-size: 0.95rem;
+      line-height: 1.8;
+    }
+
+    .main-content {
+      max-width: 1220px;
+      margin: 0 auto;
+      padding: 0 1.5rem 4rem;
+    }
+
+    .view {
+      display: none;
+    }
+
+    .view.active {
+      display: block;
+    }
+
+    .hero {
+      position: relative;
+      min-height: 80vh;
+      margin-top: 1rem;
+      border-radius: 2rem;
+      overflow: hidden;
+      background: linear-gradient(180deg, rgba(0,0,0,0.24), rgba(0,0,0,0.24)), url('https://images.unsplash.com/photo-1512436991641-6745cdb1723f?auto=format&fit=crop&w=1200&q=80') center/cover no-repeat;
+      color: #fff;
+      display: grid;
+      place-items: center;
+      text-align: center;
+    }
+
+    .hero::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(0,0,0,0.16), rgba(0,0,0,0.7));
+    }
+
+    .hero-inner {
+      position: relative;
+      z-index: 1;
+      max-width: 720px;
+      padding: 4rem 1.5rem;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.8rem 1.2rem;
+      border: 1px solid rgba(255,255,255,0.3);
+      border-radius: 999px;
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+      font-size: 0.75rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .hero-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2.8rem, 5vw, 4.8rem);
+      line-height: 0.95;
+      margin-bottom: 1.5rem;
+    }
+
+    .hero-title .accent {
+      color: var(--couleur-secondaire);
+    }
+
+    .hero-text {
+      font-size: 1.05rem;
+      line-height: 1.9;
+      max-width: 620px;
+      margin: 0 auto 2rem;
+      color: rgba(255,255,255,0.88);
+      font-weight: 300;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 1rem;
+    }
+
+    .btn,
+    .btn-primary,
+    .btn-secondary {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      border: none;
+      border-radius: 999px;
+      padding: 1rem 2rem;
+      cursor: pointer;
+      transition: transform 0.25s ease, background-color 0.25s ease, box-shadow 0.25s ease;
+      text-decoration: none;
+      font-weight: 700;
+    }
+
+    .btn-primary {
+      background: var(--couleur-secondaire);
+      color: var(--couleur-primaire);
+    }
+
+    .btn-secondary {
+      background: rgba(255,255,255,0.16);
+      color: #fff;
+      border: 1px solid rgba(255,255,255,0.24);
+    }
+
+    .btn:hover,
+    .btn-primary:hover,
+    .btn-secondary:hover {
+      transform: translateY(-2px);
+    }
+
+    .section {
+      margin-top: 5rem;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+    }
+
+    .section-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2rem, 3.6vw, 3.2rem);
+      margin: 0;
+    }
+
+    .section-subtitle {
+      color: var(--muted);
+      max-width: 640px;
+      font-weight: 300;
+      line-height: 1.9;
+    }
+
+    .grid {
+      display: grid;
+      gap: 1.5rem;
+    }
+
+    .category-grid {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .category-card,
+    .product-card,
+    .testimonial-card,
+    .feature-card {
+      background: var(--surface);
+      border-radius: 1.5rem;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.04);
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+    }
+
+    .category-card:hover,
+    .product-card:hover,
+    .testimonial-card:hover,
+    .feature-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 28px 48px rgba(0,0,0,0.08);
+    }
+
+    .category-image,
+    .product-image {
+      position: relative;
+      overflow: hidden;
+      min-height: 220px;
+    }
+
+    .category-image img,
+    .product-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.45s ease;
+    }
+
+    .category-card:hover img,
+    .product-card:hover img {
+      transform: scale(1.04);
+    }
+
+    .category-info,
+    .product-info {
+      padding: 1.4rem;
+    }
+
+    .category-title,
+    .product-title {
+      font-size: 1.05rem;
+      margin: 0 0 0.9rem;
+      font-weight: 700;
+    }
+
+    .category-button,
+    .product-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.8rem 1rem;
+      border-radius: 999px;
+      border: none;
+      background: var(--couleur-primaire);
+      color: #fff;
+      font-weight: 600;
+      width: 100%;
+      cursor: pointer;
+      transition: background-color 0.25s ease;
+    }
+
+    .category-button:hover,
+    .product-button:hover {
+      background: #222;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      background: var(--couleur-secondaire);
+      color: var(--couleur-primaire);
+      border-radius: 999px;
+      padding: 0.45rem 0.75rem;
+      font-size: 0.8rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+    }
+
+    .product-meta {
+      display: flex;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+      margin-bottom: 1rem;
+    }
+
+    .product-price {
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .product-price strong {
+      font-size: 1.5rem;
+      color: var(--couleur-primaire);
+      font-weight: 800;
+    }
+
+    .price-old {
+      color: var(--muted);
+      text-decoration: line-through;
+      font-size: 0.95rem;
+    }
+
+    .product-description {
+      color: var(--muted);
+      line-height: 1.9;
+      margin-bottom: 1.5rem;
+      font-weight: 300;
+    }
+
+    .variant-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .variant-label {
+      font-size: 0.9rem;
+      font-weight: 700;
+      margin-bottom: 0.75rem;
+      display: block;
+    }
+
+    .variant-options {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+    }
+
+    .variant-button,
+    .color-swatch {
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 0.85rem 1rem;
+      background: #fff;
+      cursor: pointer;
+      transition: transform 0.2s ease, border-color 0.2s ease;
+      font-size: 0.95rem;
+      font-weight: 600;
+    }
+
+    .variant-button.active,
+    .color-swatch.active {
+      border-color: var(--couleur-secondaire);
+      transform: translateY(-1px);
+    }
+
+    .color-swatch {
+      width: 2.4rem;
+      height: 2.4rem;
+      padding: 0;
+      border-radius: 50%;
+      position: relative;
+    }
+
+    .color-swatch::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      background: currentColor;
+    }
+
+    .order-panel {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 1.5rem;
+      padding: 1.5rem;
+      display: grid;
+      gap: 1rem;
+    }
+
+    .field {
+      display: grid;
+      gap: 0.5rem;
+    }
+
+    .field label {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--texte);
+    }
+
+    .field input,
+    .field textarea {
+      width: 100%;
+      border: 1px solid var(--border);
+      border-radius: 1rem;
+      padding: 0.95rem 1rem;
+      background: #fff;
+      color: var(--texte);
+    }
+
+    .field input:focus,
+    .field textarea:focus {
+      outline: 2px solid rgba(201,168,76,0.2);
+      border-color: rgba(201,168,76,0.3);
+    }
+
+    .quantity-control {
+      display: inline-flex;
+      align-items: center;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      overflow: hidden;
+      width: max-content;
+      background: #fff;
+    }
+
+    .quantity-control button {
+      width: 3rem;
+      height: 3rem;
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      font-size: 1.2rem;
+      color: var(--texte);
+    }
+
+    .quantity-control input {
+      width: 4rem;
+      text-align: center;
+      border: none;
+      padding: 0 0.5rem;
+    }
+
+    .summary-box {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 1.25rem;
+      padding: 1.2rem;
+      display: grid;
+      gap: 0.75rem;
+    }
+
+    .summary-item {
+      display: flex;
+      justify-content: space-between;
+      font-weight: 600;
+    }
+
+    .summary-item span:last-child {
+      color: var(--texte);
+    }
+
+    .summary-total {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 1.1rem;
+      font-weight: 800;
+      padding-top: 0.75rem;
+      border-top: 1px solid var(--border);
+    }
+
+    .order-message {
+      margin: 0;
+      font-size: 0.95rem;
+      line-height: 1.7;
+      color: var(--muted);
+    }
+
+    .message-success {
+      color: #166534;
+    }
+
+    .message-error {
+      color: #b91c1c;
+    }
+
+    .reviews-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .review-stars {
+      display: inline-flex;
+      gap: 0.2rem;
+      color: var(--couleur-secondaire);
+      margin-bottom: 0.75rem;
+    }
+
+    .testimonial-card p,
+    .feature-card p,
+    .footer-column p,
+    .footer-column a {
+      color: var(--muted);
+    }
+
+    .reassurance-grid {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .feature-card {
+      padding: 1.5rem;
+      min-height: 160px;
+      display: grid;
+      gap: 1rem;
+    }
+
+    .feature-icon {
+      width: 3rem;
+      height: 3rem;
+      display: grid;
+      place-items: center;
+      border-radius: 1rem;
+      background: rgba(201,168,76,0.12);
+      color: var(--couleur-secondaire);
+      font-size: 1.4rem;
+    }
+
+    .marquee {
+      margin-top: 3rem;
+      padding: 1rem 0;
+      overflow: hidden;
+      background: var(--surface-contrast);
+      border-radius: 1rem;
+      border: 1px solid var(--border);
+    }
+
+    .marquee span {
+      display: inline-flex;
+      white-space: nowrap;
+      animation: scroll-text 18s linear infinite;
+      font-weight: 700;
+      color: var(--couleur-primaire);
+    }
+
+    @keyframes scroll-text {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-100%); }
+    }
+
+    footer {
+      margin-top: 4rem;
+      padding: 3rem 0 1.5rem;
+      background: #fff;
+      border-top: 1px solid var(--border);
+    }
+
+    .footer-inner {
+      max-width: 1220px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 2rem;
+      padding: 0 1.5rem;
+    }
+
+    .footer-column {
+      display: grid;
+      gap: 1rem;
+    }
+
+    .footer-column h3 {
+      margin: 0;
+      font-size: 0.95rem;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      color: var(--couleur-primaire);
+    }
+
+    .footer-column a {
+      display: inline-block;
+      color: var(--texte);
+      transition: color 0.2s ease;
+    }
+
+    .footer-column a:hover {
+      color: var(--couleur-secondaire);
+    }
+
+    .footer-bottom {
+      padding-top: 2rem;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    .page-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+    }
+
+    .page-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2rem, 4vw, 3rem);
+      margin: 0;
+    }
+
+    .filter-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+    }
+
+    .filter-button {
+      border: 1px solid var(--border);
+      padding: 0.75rem 1rem;
+      border-radius: 999px;
+      background: #fff;
+      cursor: pointer;
+      transition: background-color 0.2s ease, border-color 0.2s ease;
+      font-weight: 600;
+    }
+
+    .filter-button.active {
+      background: rgba(201,168,76,0.12);
+      border-color: rgba(201,168,76,0.4);
+    }
+
+    .catalog-grid,
+    .featured-grid {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .product-card .soldout {
+      position: absolute;
+      top: 1rem;
+      left: 1rem;
+      z-index: 1;
+      background: rgba(185,28,28,0.9);
+      color: #fff;
+      padding: 0.45rem 0.85rem;
+      border-radius: 999px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    .product-card .promo {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      z-index: 1;
+      background: var(--couleur-secondaire);
+      color: var(--couleur-primaire);
+      padding: 0.45rem 0.75rem;
+      border-radius: 999px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    .product-detail-grid {
+      display: grid;
+      grid-template-columns: 1.25fr 1fr;
+      gap: 2.5rem;
+      align-items: start;
+    }
+
+    .gallery-main {
+      position: relative;
+      border-radius: 2rem;
+      overflow: hidden;
+      min-height: 420px;
+      background: var(--surface-contrast);
+    }
+
+    .gallery-main img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .thumbnail-row {
+      margin-top: 1rem;
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 1rem;
+    }
+
+    .thumbnail-row button {
+      border: 1px solid var(--border);
+      border-radius: 1.2rem;
+      overflow: hidden;
+      background: #fff;
+      cursor: pointer;
+      padding: 0;
+    }
+
+    .thumbnail-row img {
+      width: 100%;
+      height: 100px;
+      object-fit: cover;
+    }
+
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--muted);
+      font-size: 0.95rem;
+      cursor: pointer;
+      border: none;
+      background: none;
+    }
+
+    .contact-card {
+      display: grid;
+      gap: 1rem;
+      border: 1px solid var(--border);
+      border-radius: 1.5rem;
+      padding: 1.5rem;
+      background: var(--surface);
+    }
+
+    .contact-card a,
+    .contact-card p {
+      color: var(--texte);
+    }
+
+    .contact-form {
+      display: grid;
+      gap: 1rem;
+    }
+
+    .contact-form textarea {
+      min-height: 140px;
+      resize: vertical;
+    }
+
+    .view-title {
+      margin-bottom: 1rem;
+    }
+
+    .small-note {
+      font-size: 0.9rem;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    @media (max-width: 1080px) {
+      .category-grid,
+      .catalog-grid,
+      .featured-grid,
+      .reviews-grid,
+      .reassurance-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .product-detail-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .header-inner {
+        padding: 0.85rem 1rem;
+      }
+
+      .nav-links {
+        display: none;
+      }
+
+      .burger {
+        display: inline-flex;
+      }
+
+      .hero {
+        min-height: 64vh;
+      }
+
+      .section {
+        margin-top: 3rem;
+      }
+
+      .footer-inner {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .category-grid,
+      .catalog-grid,
+      .featured-grid,
+      .reviews-grid,
+      .reassurance-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-inner {
+        padding: 3rem 1rem;
+      }
+
+      .section-header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .page-header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .thumbnail-row {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <div class="ticker" id="annonceBarre">
+      <span>Livraison gratuite à partir de 10 000 FCFA</span>
+      <span>Livraison gratuite à partir de 10 000 FCFA</span>
+    </div>
+  </div>
+
+  <header class="site-header">
+    <div class="header-inner">
+      <a href="#" class="brand" data-view="home" aria-label="Retour à l’accueil">
+        W&K <span>Creation</span>
+      </a>
+      <nav class="nav-links" id="navLinks">
+        <a href="#" data-view="home" class="nav-link active">Accueil</a>
+        <a href="#" data-view="catalog" class="nav-link">Catalogue</a>
+        <a href="#" data-view="contact" class="nav-link">Contact</a>
+        <button class="cart-button" type="button" id="openCartButton" aria-label="Ouvrir le panier">
+          <span>Panier</span>
+          <span class="cart-count" id="cartCount">0</span>
+        </button>
+      </nav>
+      <button class="burger" id="burger" aria-label="Ouvrir le menu">
+        <span></span>
+      </button>
+    </div>
+  </header>
+
+  <main class="main-content">
+    <!-- VUE ACCUEIL -->
+    <section id="home" class="view active">
+      <section class="hero">
+        <div class="hero-inner">
+          <div class="hero-badge">Boutique en ligne clé en main pour la Côte d'Ivoire</div>
+          <h1 class="hero-title">Créez une boutique élégante pour <span class="accent">vos clients ivoiriens</span></h1>
+          <p class="hero-text">Template e-commerce premium conçu pour les vendeurs africains. Catalogue, paiement FedaPay, WhatsApp et expérience mobile-first.</p>
+          <div class="hero-actions">
+            <a href="#" class="btn btn-primary" data-view="catalog">Découvrir la collection</a>
+            <a href="#" class="btn btn-secondary" data-view="contact">Contactez-nous</a>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-header">
+          <div>
+            <p class="section-subtitle">Catégories sélectionnées pour vos clients.</p>
+            <h2 class="section-title">Parcourir les collections</h2>
+          </div>
+        </div>
+        <div class="grid category-grid" id="categoryGrid"></div>
+      </section>
+
+      <section class="section">
+        <div class="section-header">
+          <div>
+            <p class="section-subtitle">Produits présentés par votre boutique.</p>
+            <h2 class="section-title">Produits en vedette</h2>
+          </div>
+        </div>
+        <div class="grid featured-grid" id="featuredGrid"></div>
+      </section>
+
+      <section class="section">
+        <div class="section-header">
+          <div>
+            <p class="section-subtitle">Avis vérifiés de clients ivoiriens.</p>
+            <h2 class="section-title">Témoignages</h2>
+          </div>
+        </div>
+        <div class="grid reviews-grid" id="testimonialGrid"></div>
+      </section>
+
+      <section class="section">
+        <div class="section-header">
+          <div>
+            <p class="section-subtitle">Les garanties offertes à chaque commande.</p>
+            <h2 class="section-title">Pourquoi vos clients nous choisissent</h2>
+          </div>
+        </div>
+        <div class="grid reassurance-grid">
+          <article class="feature-card">
+            <div class="feature-icon">🚚</div>
+            <h3>Livraison rapide</h3>
+            <p>Livraison en 24 à 48h en Côte d'Ivoire pour les commandes confirmées.</p>
+          </article>
+          <article class="feature-card">
+            <div class="feature-icon">✅</div>
+            <h3>Qualité garantie</h3>
+            <p>Produits soignés, descriptions claires et photos étudiées pour vendre plus vite.</p>
+          </article>
+          <article class="feature-card">
+            <div class="feature-icon">💬</div>
+            <h3>Support WhatsApp</h3>
+            <p>Assistance simple via WhatsApp pour chaque commande et question client.</p>
+          </article>
+          <article class="feature-card">
+            <div class="feature-icon">💰</div>
+            <h3>Satisfait ou remboursé</h3>
+            <p>Engagement de confiance pour rassurer l'acheteur dès le premier clic.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="marquee">
+        <span id="marqueeText">Livraison en 24H • Meilleurs Prix • Support WhatsApp 24/7</span>
+      </section>
+    </section>
+
+    <!-- VUE CATALOGUE -->
+    <section id="catalog" class="view">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">Catalogue</h1>
+          <p class="small-note">Filtrez les produits par catégorie et découvrez chaque article en détail.</p>
+        </div>
+      </div>
+      <div class="filter-group" id="categoryFilters"></div>
+      <div class="grid catalog-grid" id="catalogGrid"></div>
+    </section>
+
+    <!-- VUE PRODUIT -->
+    <section id="product" class="view">
+      <div class="page-header">
+        <button class="back-link" type="button" id="backToCatalog">← Retour au catalogue</button>
+        <h1 class="page-title" id="productName">Produit</h1>
+      </div>
+      <div class="product-detail-grid">
+        <div>
+          <div class="gallery-main" id="galleryMain">
+            <img src="" alt="Photo du produit" id="mainProductImage">
+          </div>
+          <div class="thumbnail-row" id="thumbnailRow"></div>
+        </div>
+        <div>
+          <div id="productBadges"></div>
+          <div class="product-meta">
+            <div class="product-price">
+              <strong id="productCurrentPrice">0 FCFA</strong>
+              <span class="price-old" id="productOldPrice"></span>
+            </div>
+            <span class="badge" id="productSavingBadge"></span>
+          </div>
+          <p class="product-description" id="productDescription"></p>
+          <div id="variantArea"></div>
+          <div class="order-panel">
+            <form id="orderForm">
+              <div class="field">
+                <label for="customerFirstName">Prénom *</label>
+                <input type="text" id="customerFirstName" autocomplete="given-name" required>
+              </div>
+              <div class="field">
+                <label for="customerLastName">Nom *</label>
+                <input type="text" id="customerLastName" autocomplete="family-name" required>
+              </div>
+              <div class="field">
+                <label for="customerPhone">Numéro de téléphone *</label>
+                <input type="tel" id="customerPhone" autocomplete="tel" required>
+              </div>
+              <div class="field">
+                <label for="customerLocation">Quartier / Localisation *</label>
+                <input type="text" id="customerLocation" autocomplete="street-address" required>
+              </div>
+              <div class="field">
+                <label>Quantité</label>
+                <div class="quantity-control">
+                  <button type="button" id="qtyMinus">−</button>
+                  <input type="number" id="orderQuantity" min="1" value="1">
+                  <button type="button" id="qtyPlus">＋</button>
+                </div>
+              </div>
+            </form>
+            <div class="summary-box">
+              <div class="summary-item"><span>Article</span><span id="summaryProduct">—</span></div>
+              <div class="summary-item"><span>Variantes</span><span id="summaryVariants">—</span></div>
+              <div class="summary-item"><span>Quantité</span><span id="summaryQuantity">1</span></div>
+              <div class="summary-total"><span>Total</span><strong id="summaryTotal">0 FCFA</strong></div>
+              <button class="btn btn-primary" type="button" id="payNowButton">Payer maintenant</button>
+              <p class="order-message" id="orderMessage"></p>
+            </div>
+          </div>
+          <section class="section" style="margin-top:2rem;">
+            <h2 class="section-title" style="font-size:1.5rem;">Avis sur le produit</h2>
+            <div class="grid reviews-grid" id="productReviewGrid"></div>
+          </section>
+        </div>
+      </div>
+    </section>
+
+    <!-- VUE CONTACT -->
+    <section id="contact" class="view">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">Contact</h1>
+          <p class="small-note">Envoyez un message rapide ou contactez directement le vendeur sur WhatsApp.</p>
+        </div>
+      </div>
+      <div class="grid" style="grid-template-columns: 1fr 1fr; gap: 2rem;">
+        <div class="contact-card">
+          <h3>Contact direct</h3>
+          <p><strong>WhatsApp :</strong> <a href="#" id="contactWhatsApp" target="_blank" rel="noreferrer"></a></p>
+          <p><strong>Email :</strong> <a href="mailto:contact@wkcreation.ci">contact@wkcreation.ci</a></p>
+          <p class="small-note">Les clients peuvent demander une assistance, un devis ou un suivi de commande en message direct.</p>
+        </div>
+        <form class="contact-form" id="contactForm">
+          <div class="field">
+            <label for="contactName">Nom *</label>
+            <input type="text" id="contactName" autocomplete="name" required>
+          </div>
+          <div class="field">
+            <label for="contactEmail">Email *</label>
+            <input type="email" id="contactEmail" autocomplete="email" required>
+          </div>
+          <div class="field">
+            <label for="contactMessage">Message *</label>
+            <textarea id="contactMessage" autocomplete="off" required></textarea>
+          </div>
+          <button class="btn btn-primary" type="submit">Envoyer le message</button>
+          <p class="order-message" id="contactFormMessage"></p>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <div class="cart-panel" id="cartPanel" aria-hidden="true">
+    <div class="cart-panel-backdrop" id="cartBackdrop"></div>
+    <div class="cart-panel-content" role="dialog" aria-modal="true" aria-labelledby="cartTitle">
+      <div class="cart-panel-header">
+        <div>
+          <h2 id="cartTitle">Votre panier</h2>
+          <p class="cart-item-count" id="cartItemCount">0 article</p>
+        </div>
+        <button type="button" id="closeCartButton" aria-label="Fermer le panier">×</button>
+      </div>
+      <div class="cart-items" id="cartItems"></div>
+      <div class="cart-panel-footer">
+        <div class="cart-total"><span>Total</span><strong id="cartTotal">0 FCFA</strong></div>
+        <button class="btn btn-primary" type="button" id="checkoutCartButton">Finaliser et payer</button>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-column">
+        <div class="brand">W&K <span>Creation</span></div>
+        <p>Template e-commerce réutilisable pour les vendeurs ivoiriens. Paramétrez le WhatsApp et la clé FedaPay pour chaque boutique.</p>
+      </div>
+      <div class="footer-column">
+        <h3>Navigation</h3>
+        <a href="#" data-view="home" class="footer-link">Accueil</a>
+        <a href="#" data-view="catalog" class="footer-link">Catalogue</a>
+        <a href="#" data-view="contact" class="footer-link">Contact</a>
+      </div>
+      <div class="footer-column">
+        <h3>Contact</h3>
+        <a href="#" id="footerWhatsApp" target="_blank" rel="noreferrer">WhatsApp</a>
+        <a href="mailto:contact@wkcreation.ci">contact@wkcreation.ci</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 W&K Creation. Tous droits réservés.</span>
+      <span>Wave · Orange Money · MTN MoMo</span>
+    </div>
+  </footer>
+
+  <script>
+    const SHOP_NAME = 'W&K Creation'; // changer par client
+    const WHATSAPP_VENDOR = '+22500000000'; // changer par client
+    const FEDAPAY_KEY = 'VOTRE_CLE_FEDAPAY'; // changer par client
+    const ANNOUNCE_TEXT = 'Livraison gratuite à partir de 10 000 FCFA';
+    const MARQUEE_TEXT = 'Livraison en 24H • Meilleurs Prix • Support WhatsApp 24/7';
+
+    const CATEGORIES = [
+      { id: 'mode', nom: 'Mode & Vêtements', photo: 'https://images.unsplash.com/photo-1512436991641-6745cdb1723f?auto=format&fit=crop&w=900&q=80' },
+      { id: 'beaute', nom: 'Cosmétiques & Beauté', photo: 'https://images.unsplash.com/photo-1495121605193-b116b5b9c5d0?auto=format&fit=crop&w=900&q=80' },
+      { id: 'maison', nom: 'Maison & Décoration', photo: 'https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=900&q=80' },
+      { id: 'accessoires', nom: 'Accessoires & Bijoux', photo: 'https://images.unsplash.com/photo-1512436991641-6745cdb1723f?auto=format&fit=crop&w=900&q=80' }
+    ];
+
+    const PRODUITS = [
+      {
+        id: 1,
+        nom: 'Robe d’été élégante',
+        categorie: 'mode',
+        prix: 28000,
+        prixBarre: 42000,
+        photos: [
+          'https://images.unsplash.com/photo-1520975913137-0a8f2c3472e4?auto=format&fit=crop&w=900&q=80',
+          'https://images.unsplash.com/photo-1503341455253-b2e723bb3dbb?auto=format&fit=crop&w=900&q=80'
+        ],
+        description: 'Robe légère, idéale pour les journées chaudes et les occasions spéciales. Coupe fluide et tissu doux.',
+        variantes: {
+          tailles: ['S', 'M', 'L', 'XL'],
+          couleurs: [
+            { nom: 'Noir', hex: '#111111' },
+            { nom: 'Sable', hex: '#D4B16A' }
+          ]
+        },
+        enVedette: true,
+        stock: true
+      },
+      {
+        id: 2,
+        nom: 'Palette de maquillage luxe',
+        categorie: 'beaute',
+        prix: 19500,
+        prixBarre: 29000,
+        photos: [
+          'https://images.unsplash.com/photo-1518311228452-1f91f55ff683?auto=format&fit=crop&w=900&q=80',
+          'https://images.unsplash.com/photo-1501004318641-b39e6451bec6?auto=format&fit=crop&w=900&q=80'
+        ],
+        description: 'Palette complète avec ombres à paupières, illuminateur et bronzer. Fini mat et scintillant.',
+        variantes: {
+          tailles: [],
+          couleurs: []
+        },
+        enVedette: true,
+        stock: true
+      },
+      {
+        id: 3,
+        nom: 'Sac à main artisanal',
+        categorie: 'accessoires',
+        prix: 22500,
+        prixBarre: 32000,
+        photos: [
+          'https://images.unsplash.com/photo-1512436991641-6745cdb1723f?auto=format&fit=crop&w=900&q=80',
+          'https://images.unsplash.com/photo-1495121605193-b116b5b9c5d0?auto=format&fit=crop&w=900&q=80'
+        ],
+        description: 'Sac élégant fabriqué à la main avec des matériaux durables. Adapté au quotidien et aux sorties.',
+        variantes: {
+          tailles: [],
+          couleurs: [
+            { nom: 'Noir', hex: '#000000' },
+            { nom: 'Brun', hex: '#8B5E3C' }
+          ]
+        },
+        enVedette: false,
+        stock: true
+      },
+      {
+        id: 4,
+        nom: 'Set de décoration murale',
+        categorie: 'maison',
+        prix: 17800,
+        prixBarre: 24500,
+        photos: [
+          'https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=900&q=80',
+          'https://images.unsplash.com/photo-1494526585095-c41746248156?auto=format&fit=crop&w=900&q=80'
+        ],
+        description: 'Ensemble de décorations murales modernes pour sublimer le salon ou l’espace de travail.',
+        variantes: {
+          tailles: [],
+          couleurs: []
+        },
+        enVedette: true,
+        stock: false
+      },
+      {
+        id: 5,
+        nom: 'Chemise en wax premium',
+        categorie: 'mode',
+        prix: 24000,
+        prixBarre: 32000,
+        photos: [
+          'https://images.unsplash.com/photo-1541099649105-f69ad21f3246?auto=format&fit=crop&w=900&q=80',
+          'https://images.unsplash.com/photo-1521334884684-d80222895322?auto=format&fit=crop&w=900&q=80'
+        ],
+        description: 'Chemise artisanale avec imprimé wax. Coupe moderne, idéale pour un look élégant et authentique.',
+        variantes: {
+          tailles: ['S', 'M', 'L', 'XL'],
+          couleurs: [
+            { nom: 'Bleu', hex: '#1e3a8a' },
+            { nom: 'Rouge', hex: '#b91c1c' }
+          ]
+        },
+        enVedette: false,
+        stock: true
+      }
+    ];
+
+    const TESTIMONIALS = [
+      { nom: 'Aïcha', ville: 'Yopougon', avis: 'Livraison rapide et produit conforme. Je recommande à toutes mes amies.', note: 5 },
+      { nom: 'Kouassi', ville: 'Abidjan', avis: 'Service très professionnel et support WhatsApp simple à utiliser.', note: 5 },
+      { nom: 'Marie', ville: 'Cocody', avis: 'Produit de qualité, site fluide. J’ai reçu ma commande en 24h.', note: 4 }
+    ];
+
+    const PRODUCT_REVIEWS = [
+      { nom: 'Sophie', avis: 'Très belle qualité, je la porte souvent.', note: 5 },
+      { nom: 'Issa', avis: 'Excellent produit, emballage soigné.', note: 5 },
+      { nom: 'Fanta', avis: 'J’adore la finition et les couleurs.', note: 4 }
+    ];
+
+    const state = {
+      view: 'home',
+      filter: 'all',
+      currentProduct: null,
+      selectedSize: null,
+      selectedColor: null,
+      quantity: 1,
+      cartCount: 0
+    };
+
+    const elements = {
+      navLinks: document.querySelectorAll('.nav-link'),
+      brandLink: document.querySelector('.brand'),
+      viewSections: document.querySelectorAll('.view'),
+      categoryGrid: document.getElementById('categoryGrid'),
+      featuredGrid: document.getElementById('featuredGrid'),
+      testimonialGrid: document.getElementById('testimonialGrid'),
+      categoryFilters: document.getElementById('categoryFilters'),
+      catalogGrid: document.getElementById('catalogGrid'),
+      cartCount: document.getElementById('cartCount'),
+      contactWhatsApp: document.getElementById('contactWhatsApp'),
+      footerWhatsApp: document.getElementById('footerWhatsApp'),
+      annonceBarre: document.getElementById('annonceBarre'),
+      marqueeText: document.getElementById('marqueeText'),
+      productName: document.getElementById('productName'),
+      galleryMain: document.getElementById('galleryMain'),
+      mainProductImage: document.getElementById('mainProductImage'),
+      thumbnailRow: document.getElementById('thumbnailRow'),
+      productBadges: document.getElementById('productBadges'),
+      productCurrentPrice: document.getElementById('productCurrentPrice'),
+      productOldPrice: document.getElementById('productOldPrice'),
+      productSavingBadge: document.getElementById('productSavingBadge'),
+      productDescription: document.getElementById('productDescription'),
+      variantArea: document.getElementById('variantArea'),
+      summaryProduct: document.getElementById('summaryProduct'),
+      summaryVariants: document.getElementById('summaryVariants'),
+      summaryQuantity: document.getElementById('summaryQuantity'),
+      summaryTotal: document.getElementById('summaryTotal'),
+      orderQuantity: document.getElementById('orderQuantity'),
+      qtyMinus: document.getElementById('qtyMinus'),
+      qtyPlus: document.getElementById('qtyPlus'),
+      payNowButton: document.getElementById('payNowButton'),
+      orderMessage: document.getElementById('orderMessage'),
+      productReviewGrid: document.getElementById('productReviewGrid'),
+      backToCatalog: document.getElementById('backToCatalog'),
+      contactForm: document.getElementById('contactForm'),
+      contactFormMessage: document.getElementById('contactFormMessage'),
+      navContainer: document.getElementById('navLinks'),
+      burger: document.getElementById('burger')
+    };
+
+    function formatFCFA(value) {
+      return new Intl.NumberFormat('fr-FR').format(value).replace(/\s/g, ' ') + ' FCFA';
+    }
+
+    function sanitizePhone(phone) {
+      return phone.replace(/\D/g, '');
+    }
+
+    function renderHomeView() {
+      elements.categoryGrid.innerHTML = '';
+      CATEGORIES.slice(0, 4).forEach(category => {
+        const card = document.createElement('article');
+        card.className = 'category-card';
+        card.innerHTML = `
+          <div class="category-image"><img src="${category.photo}" alt="${category.nom}"></div>
+          <div class="category-info">
+            <p class="badge">Catégorie</p>
+            <h3 class="category-title">${category.nom}</h3>
+            <button class="category-button" type="button" data-category="${category.id}">Voir la catégorie</button>
+          </div>
+        `;
+        const categoryButton = card.querySelector('.category-button');
+        categoryButton.addEventListener('click', () => {
+          state.filter = category.id;
+          showView('catalog');
+          renderCatalogueView();
+          elements.categoryFilters.querySelectorAll('.filter-button').forEach(btn => {
+            btn.classList.toggle('active', btn.dataset.filter === category.id);
+          });
+        });
+        elements.categoryGrid.appendChild(card);
+      });
+
+      elements.featuredGrid.innerHTML = '';
+      PRODUITS.filter(item => item.enVedette).forEach(product => {
+        const saving = Math.round(((product.prixBarre - product.prix) / product.prixBarre) * 100);
+        const card = document.createElement('article');
+        card.className = 'product-card';
+        card.innerHTML = `
+          <div class="product-image">
+            ${!product.stock ? '<span class="soldout">Épuisé</span>' : ''}
+            ${product.prix < product.prixBarre ? `<span class="promo">-${saving}%</span>` : ''}
+            <img src="${product.photos[0]}" alt="${product.nom}" data-second="${product.photos[1] || product.photos[0]}">
+          </div>
+          <div class="product-info">
+            <h3 class="product-title">${product.nom}</h3>
+            <div class="product-price"><strong>${formatFCFA(product.prix)}</strong><span class="price-old">${formatFCFA(product.prixBarre)}</span></div>
+            <button class="product-button" type="button" data-product="${product.id}" ${product.stock ? '' : 'disabled'}>Voir le produit</button>
+          </div>
+        `;
+        const image = card.querySelector('img');
+        image.addEventListener('mouseenter', () => { image.src = image.dataset.second; });
+        image.addEventListener('mouseleave', () => { image.src = product.photos[0]; });
+        card.querySelector('[data-product]').addEventListener('click', () => openProduct(product.id));
+        elements.featuredGrid.appendChild(card);
+      });
+
+      elements.testimonialGrid.innerHTML = '';
+      TESTIMONIALS.forEach(item => {
+        const card = document.createElement('article');
+        card.className = 'testimonial-card';
+        card.innerHTML = `
+          <div class="review-stars">${'★'.repeat(item.note)}${'☆'.repeat(5 - item.note)}</div>
+          <p>${item.avis}</p>
+          <strong>${item.nom}</strong>
+          <span>${item.ville}</span>
+        `;
+        elements.testimonialGrid.appendChild(card);
+      });
+    }
+
+    function renderCatalogueView() {
+      elements.categoryFilters.innerHTML = '';
+      const allButton = document.createElement('button');
+      allButton.className = 'filter-button active';
+      allButton.textContent = 'Toutes';
+      allButton.dataset.filter = 'all';
+      elements.categoryFilters.appendChild(allButton);
+
+      CATEGORIES.forEach(category => {
+        const button = document.createElement('button');
+        button.className = 'filter-button';
+        button.textContent = category.nom;
+        button.dataset.filter = category.id;
+        elements.categoryFilters.appendChild(button);
+      });
+
+      elements.categoryFilters.querySelectorAll('.filter-button').forEach(button => {
+        button.addEventListener('click', () => {
+          elements.categoryFilters.querySelectorAll('.filter-button').forEach(btn => btn.classList.remove('active'));
+          button.classList.add('active');
+          state.filter = button.dataset.filter;
+          populateCatalogue();
+        });
+      });
+
+      populateCatalogue();
+    }
+
+    function populateCatalogue() {
+      elements.catalogGrid.innerHTML = '';
+      const list = state.filter === 'all' ? PRODUITS : PRODUITS.filter(item => item.categorie === state.filter);
+      if (!list.length) {
+        elements.catalogGrid.innerHTML = '<p>Aucun produit trouvé pour cette catégorie.</p>';
+        return;
+      }
+      list.forEach(product => {
+        const saving = Math.round(((product.prixBarre - product.prix) / product.prixBarre) * 100);
+        const card = document.createElement('article');
+        card.className = 'product-card';
+        card.innerHTML = `
+          <div class="product-image">
+            ${!product.stock ? '<span class="soldout">Épuisé</span>' : ''}
+            ${product.prix < product.prixBarre ? `<span class="promo">-${saving}%</span>` : ''}
+            <img src="${product.photos[0]}" alt="${product.nom}" data-second="${product.photos[1] || product.photos[0]}">
+          </div>
+          <div class="product-info">
+            <h3 class="product-title">${product.nom}</h3>
+            <div class="product-price"><strong>${formatFCFA(product.prix)}</strong><span class="price-old">${formatFCFA(product.prixBarre)}</span></div>
+            <button class="product-button" type="button" data-product="${product.id}" ${product.stock ? '' : 'disabled'}>Voir le produit</button>
+          </div>
+        `;
+        const image = card.querySelector('img');
+        image.addEventListener('mouseenter', () => { image.src = image.dataset.second; });
+        image.addEventListener('mouseleave', () => { image.src = product.photos[0]; });
+        card.querySelector('[data-product]').addEventListener('click', () => openProduct(product.id));
+        elements.catalogGrid.appendChild(card);
+      });
+    }
+
+    function openProduct(productId) {
+      const product = PRODUITS.find(item => item.id === Number(productId));
+      if (!product) return;
+      state.currentProduct = product;
+      state.quantity = 1;
+      state.selectedSize = product.variantes.tailles.length ? product.variantes.tailles[0] : null;
+      state.selectedColor = product.variantes.couleurs.length ? product.variantes.couleurs[0].nom : null;
+      updateProductView();
+      showView('product');
+    }
+
+    function updateProductView() {
+      const product = state.currentProduct;
+      if (!product) return;
+      document.title = `${product.nom} — ${SHOP_NAME}`;
+      elements.productName.textContent = product.nom;
+      elements.mainProductImage.src = product.photos[0];
+      elements.mainProductImage.alt = product.nom;
+      elements.thumbnailRow.innerHTML = '';
+      product.photos.forEach((src, index) => {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.innerHTML = `<img src="${src}" alt="Miniature ${index + 1}">`;
+        button.addEventListener('click', () => {
+          elements.mainProductImage.src = src;
+        });
+        elements.thumbnailRow.appendChild(button);
+      });
+      elements.productBadges.innerHTML = product.stock ? '' : '<span class="badge">Produit indisponible</span>';
+      elements.productCurrentPrice.textContent = formatFCFA(product.prix);
+      elements.productOldPrice.textContent = formatFCFA(product.prixBarre);
+      const savingPercent = Math.round(((product.prixBarre - product.prix) / product.prixBarre) * 100);
+      elements.productSavingBadge.textContent = product.prix < product.prixBarre ? `Économisez ${savingPercent}%` : '';
+      elements.productDescription.textContent = product.description;
+      elements.orderQuantity.value = state.quantity;
+      renderVariantSelectors(product);
+      updateSummary();
+      renderProductReviews();
+    }
+
+    function renderVariantSelectors(product) {
+      elements.variantArea.innerHTML = '';
+      if (product.variantes.tailles.length) {
+        const sizeGroup = document.createElement('div');
+        sizeGroup.className = 'variant-group';
+        sizeGroup.innerHTML = `<span class="variant-label">Taille</span><div class="variant-options" id="sizeOptions"></div>`;
+        elements.variantArea.appendChild(sizeGroup);
+        const sizeOptions = sizeGroup.querySelector('#sizeOptions');
+        product.variantes.tailles.forEach(size => {
+          const button = document.createElement('button');
+          button.type = 'button';
+          button.className = 'variant-button';
+          button.textContent = size;
+          button.dataset.size = size;
+          if (state.selectedSize === size) button.classList.add('active');
+          button.addEventListener('click', () => {
+            state.selectedSize = size;
+            sizeOptions.querySelectorAll('.variant-button').forEach(btn => btn.classList.remove('active'));
+            button.classList.add('active');
+            updateSummary();
+          });
+          sizeOptions.appendChild(button);
+        });
+      }
+      if (product.variantes.couleurs.length) {
+        const colorGroup = document.createElement('div');
+        colorGroup.className = 'variant-group';
+        colorGroup.innerHTML = `<span class="variant-label">Couleur</span><div class="variant-options" id="colorOptions"></div>`;
+        elements.variantArea.appendChild(colorGroup);
+        const colorOptions = colorGroup.querySelector('#colorOptions');
+        product.variantes.couleurs.forEach(color => {
+          const button = document.createElement('button');
+          button.type = 'button';
+          button.className = 'color-swatch';
+          button.style.color = color.hex;
+          button.title = color.nom;
+          button.dataset.color = color.nom;
+          if (state.selectedColor === color.nom) button.classList.add('active');
+          button.addEventListener('click', () => {
+            state.selectedColor = color.nom;
+            colorOptions.querySelectorAll('.color-swatch').forEach(btn => btn.classList.remove('active'));
+            button.classList.add('active');
+            updateSummary();
+          });
+          colorOptions.appendChild(button);
+        });
+      }
+      if (!product.variantes.tailles.length && !product.variantes.couleurs.length) {
+        elements.variantArea.innerHTML = '<p class="small-note">Aucune variante disponible pour ce produit.</p>';
+      }
+    }
+
+    function updateSummary() {
+      if (!state.currentProduct) return;
+      elements.summaryProduct.textContent = state.currentProduct.nom;
+      const variants = [];
+      if (state.selectedSize) variants.push(state.selectedSize);
+      if (state.selectedColor) variants.push(state.selectedColor);
+      elements.summaryVariants.textContent = variants.length ? variants.join(' / ') : 'Aucune variante';
+      elements.summaryQuantity.textContent = state.quantity;
+      elements.summaryTotal.textContent = formatFCFA(state.currentProduct.prix * state.quantity);
+      elements.orderMessage.textContent = '';
+      state.cartCount = state.quantity;
+      updateCartCount();
+    }
+
+    function renderProductReviews() {
+      elements.productReviewGrid.innerHTML = '';
+      PRODUCT_REVIEWS.forEach(review => {
+        const card = document.createElement('article');
+        card.className = 'testimonial-card';
+        card.innerHTML = `
+          <div class="review-stars">${'★'.repeat(review.note)}${'☆'.repeat(5 - review.note)}</div>
+          <p>${review.avis}</p>
+          <strong>${review.nom}</strong>
+        `;
+        elements.productReviewGrid.appendChild(card);
+      });
+    }
+
+    function updateCartCount() {
+      elements.cartCount.textContent = state.cartCount;
+    }
+
+    function showView(view) {
+      state.view = view;
+      elements.viewSections.forEach(section => {
+        section.classList.toggle('active', section.id === view);
+      });
+      elements.navLinks.forEach(link => {
+        link.classList.toggle('active', link.dataset.view === view);
+      });
+      if (view === 'home') {
+        document.title = `${SHOP_NAME} — Accueil`;
+      } else if (view === 'catalog') {
+        document.title = `${SHOP_NAME} — Catalogue`;
+      } else if (view === 'contact') {
+        document.title = `${SHOP_NAME} — Contact`;
+      }
+      if (view === 'catalog') renderCatalogueView();
+    }
+
+    function bindEvents() {
+      elements.navLinks.forEach(link => {
+        link.addEventListener('click', event => {
+          event.preventDefault();
+          const view = link.dataset.view;
+          if (view) showView(view);
+          if (document.body.classList.contains('nav-open')) {
+            document.body.classList.remove('nav-open');
+          }
+        });
+      });
+
+      elements.brandLink.addEventListener('click', event => {
+        event.preventDefault();
+        showView('home');
+      });
+
+      document.querySelectorAll('[data-view]').forEach(el => {
+        el.addEventListener('click', event => {
+          const view = el.dataset.view;
+          if (view) {
+            event.preventDefault();
+            showView(view);
+          }
+        });
+      });
+
+      elements.backToCatalog.addEventListener('click', () => showView('catalog'));
+      elements.orderQuantity.addEventListener('input', () => {
+        const value = Math.max(1, Number(elements.orderQuantity.value) || 1);
+        state.quantity = value;
+        elements.orderQuantity.value = value;
+        updateSummary();
+      });
+      elements.qtyMinus.addEventListener('click', () => {
+        if (state.quantity > 1) {
+          state.quantity -= 1;
+          elements.orderQuantity.value = state.quantity;
+          updateSummary();
+        }
+      });
+      elements.qtyPlus.addEventListener('click', () => {
+        state.quantity += 1;
+        elements.orderQuantity.value = state.quantity;
+        updateSummary();
+      });
+      elements.payNowButton.addEventListener('click', handleCheckout);
+      elements.contactForm.addEventListener('submit', handleContactSubmit);
+      elements.burger.addEventListener('click', () => {
+        document.body.classList.toggle('nav-open');
+      });
+      document.querySelectorAll('.footer-link').forEach(link => {
+        link.addEventListener('click', event => {
+          event.preventDefault();
+          const view = link.dataset.view;
+          if (view) showView(view);
+        });
+      });
+    }
+
+    function handleContactSubmit(event) {
+      event.preventDefault();
+      const name = document.getElementById('contactName').value.trim();
+      const email = document.getElementById('contactEmail').value.trim();
+      const message = document.getElementById('contactMessage').value.trim();
+      if (!name || !email || !message) {
+        elements.contactFormMessage.textContent = 'Veuillez remplir tous les champs du formulaire.';
+        elements.contactFormMessage.className = 'order-message message-error';
+        return;
+      }
+      elements.contactFormMessage.textContent = 'Merci ! Votre message a bien été envoyé. Le vendeur vous contactera rapidement.';
+      elements.contactFormMessage.className = 'order-message message-success';
+      event.target.reset();
+    }
+
+    function handleCheckout() {
+      if (!state.currentProduct) return;
+      const firstName = document.getElementById('customerFirstName').value.trim();
+      const lastName = document.getElementById('customerLastName').value.trim();
+      const phone = document.getElementById('customerPhone').value.trim();
+      const location = document.getElementById('customerLocation').value.trim();
+      const product = state.currentProduct;
+      if (!firstName || !lastName || !phone || !location) {
+        elements.orderMessage.textContent = 'Veuillez remplir tous les champs obligatoires.';
+        elements.orderMessage.className = 'order-message message-error';
+        return;
+      }
+      if (product.variantes.tailles.length && !state.selectedSize) {
+        elements.orderMessage.textContent = 'Veuillez sélectionner une taille.';
+        elements.orderMessage.className = 'order-message message-error';
+        return;
+      }
+      if (product.variantes.couleurs.length && !state.selectedColor) {
+        elements.orderMessage.textContent = 'Veuillez sélectionner une couleur.';
+        elements.orderMessage.className = 'order-message message-error';
+        return;
+      }
+      if (!FEDAPAY_KEY) {
+        elements.orderMessage.textContent = 'Clé FedaPay manquante. Merci de la renseigner dans les variables CSS.';
+        elements.orderMessage.className = 'order-message message-error';
+        return;
+      }
+      const amount = product.prix * state.quantity;
+      const variants = [];
+      if (state.selectedSize) variants.push(state.selectedSize);
+      if (state.selectedColor) variants.push(state.selectedColor);
+      const description = `${product.nom}${variants.length ? ' - ' + variants.join(' / ') : ''}`;
+      if (typeof FedaPayCheckout !== 'function') {
+        elements.orderMessage.textContent = 'Le widget FedaPay n’est pas chargé. Vérifiez votre connexion et rechargez la page.';
+        elements.orderMessage.className = 'order-message message-error';
+        return;
+      }
+      try {
+        const checkout = FedaPayCheckout({
+          publicKey: FEDAPAY_KEY,
+          amount,
+          currency: 'XOF',
+          description,
+          metadata: {
+            client: `${firstName} ${lastName}`,
+            telephone: phone,
+            localisation: location
+          },
+          onComplete: response => {
+            const txId = response?.id || response?.transaction?.id || 'N/A';
+            const variantText = variants.length ? variants.join(' / ') : 'Aucune variante';
+            const message = `🛍 NOUVELLE COMMANDE — ${SHOP_NAME}%0A%0A👤 Client : ${encodeURIComponent(firstName)} ${encodeURIComponent(lastName)}%0A📞 Téléphone : ${encodeURIComponent(phone)}%0A📍 Localisation : ${encodeURIComponent(location)}%0A%0A📦 Commande :%0A• Article : ${encodeURIComponent(product.nom)}%0A• Variante : ${encodeURIComponent(variantText)}%0A• Quantité : ${state.quantity}%0A• Total payé : ${amount} FCFA%0A%0A✅ Paiement confirmé via FedaPay%0AID Transaction : ${encodeURIComponent(txId)}`;
+            elements.orderMessage.textContent = `🎉 Merci ${firstName} ! Votre commande a été confirmée. Vous serez livré sous 24h.`;
+            elements.orderMessage.className = 'order-message message-success';
+            const phoneUrl = sanitizePhone(WHATSAPP_VENDOR);
+            window.open(`https://wa.me/${phoneUrl}?text=${message}`, '_blank');
+          }
+        });
+        if (checkout && typeof checkout.open === 'function') {
+          checkout.open();
+        }
+      } catch (error) {
+        elements.orderMessage.textContent = 'Erreur lors de l’ouverture du paiement. Réessayez plus tard.';
+        elements.orderMessage.className = 'order-message message-error';
+      }
+    }
+
+    function fillWhatsAppLinks() {
+      const sanitized = sanitizePhone(WHATSAPP_VENDOR);
+      const whatsappUrl = `https://wa.me/${sanitized}`;
+      elements.contactWhatsApp.textContent = WHATSAPP_VENDOR;
+      elements.contactWhatsApp.href = whatsappUrl;
+      elements.footerWhatsApp.textContent = 'WhatsApp';
+      elements.footerWhatsApp.href = whatsappUrl;
+    }
+
+    function initializePage() {
+      elements.annonceBarre.innerHTML = `<span>${ANNOUNCE_TEXT}</span><span>${ANNOUNCE_TEXT}</span>`;
+      elements.marqueeText.textContent = MARQUEE_TEXT;
+      fillWhatsAppLinks();
+      renderHomeView();
+      renderCatalogueView();
+      updateCartCount();
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      initializePage();
+      bindEvents();
+      showView('home');
+    });
+  </script>
+  <script src="https://cdn.fedapay.com/checkout.js?v=1.1.7"></script>
+</body>
+</html>
