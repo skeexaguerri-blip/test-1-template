@@ -108,7 +108,7 @@
   </div>
 
   <script>
-    const API_BASE_URL = 'http://localhost:3000';
+    const API_BASE_URL = 'http://localhost:5000';
     let clientData = null;
 
     // SUPABASE
@@ -202,7 +202,7 @@
 
       } catch(err) {
         btn.disabled = false;
-        btn.innerHTML = '💳 Payer avec FedaPay';
+        btn.innerHTML = '💳 Finalisez le payement';
         showMsg('❌ Erreur : ' + err.message, 'error');
         console.error(err);
       }
