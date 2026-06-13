@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Inscription Confirmée — W&K Creation</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --or: #C9A84C; --or-light: #E8C96A; --or-dark: #A07C2E;
+      --noir: #0D0D0D; --noir2: #141414; --noir3: #1E1E1E;
+      --blanc: #F5F0E8; --gris: #888; --gris2: #555;
+      --rouge: #E05252; --vert: #4CAF7D;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { background: var(--noir); color: var(--blanc); font-family: 'DM Sans', sans-serif; overflow-x: hidden; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; }
+    
+    .success-container { max-width: 600px; width: 100%; text-align: center; }
+    .success-box { background: var(--noir2); border: 1px solid rgba(76,175,125,0.3); border-top: 4px solid var(--vert); padding: 60px 40px; }
+    .success-icon { font-size: 5rem; display: block; margin-bottom: 24px; }
+    .success-box h1 { font-family: 'Playfair Display', serif; font-size: 2.2rem; color: var(--blanc); margin-bottom: 16px; }
+    .success-box .sub { color: var(--gris); font-size: 0.95rem; line-height: 1.7; font-weight: 300; margin-bottom: 16px; }
+    .success-box .highlight { color: var(--or); font-weight: 600; }
+    
+    .info-box { background: rgba(76,175,125,0.08); border: 1px solid rgba(76,175,125,0.2); padding: 20px; margin: 24px 0; border-radius: 4px; }
+    .info-box p { color: var(--vert); font-size: 0.92rem; margin-bottom: 8px; line-height: 1.6; }
+    .info-box p:last-child { margin-bottom: 0; }
+    
+    .whatsapp-box { background: rgba(201,168,76,0.08); border: 1px solid rgba(201,168,76,0.2); padding: 20px; margin: 24px 0; border-radius: 4px; }
+    .whatsapp-box p { color: var(--or); font-size: 0.92rem; margin: 0; line-height: 1.6; }
+    .whatsapp-box strong { color: var(--blanc); }
+    
+    .btn-home { background: var(--or); color: var(--noir); border: none; padding: 16px 44px; font-family: 'DM Sans', sans-serif; font-weight: 700; font-size: 1rem; cursor: pointer; letter-spacing: 1px; text-transform: uppercase; margin-top: 24px; transition: background 0.3s; display: inline-block; text-decoration: none; }
+    .btn-home:hover { background: var(--or-light); }
+    
+    .steps-list { text-align: left; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); padding: 20px; margin: 24px 0; border-radius: 4px; }
+    .steps-list li { color: var(--gris); font-size: 0.9rem; margin-bottom: 10px; padding-left: 20px; position: relative; line-height: 1.6; }
+    .steps-list li:last-child { margin-bottom: 0; }
+    .steps-list li::before { content: '✓'; position: absolute; left: 0; color: var(--vert); font-weight: 700; }
+    
+    @media (max-width: 768px) {
+      .success-box { padding: 40px 24px; }
+      .success-box h1 { font-size: 1.5rem; }
+      .success-icon { font-size: 3rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="success-container">
+    <div class="success-box">
+      <span class="success-icon">🎉</span>
+      <h1>Félicitations !</h1>
+      <p class="sub">Votre compte <span class="highlight">W&K Creation</span> a été créé et votre paiement confirmé.</p>
+      
+      <div class="info-box">
+        <p>✅ <strong>Inscription terminée</strong></p>
+        <p>✅ <strong>Paiement reçu</strong></p>
+        <p>✅ <strong>Compte actif</strong></p>
+      </div>
+      
+      <div class="whatsapp-box">
+        <p>📱 Notre équipe vous contactera sur <strong>WhatsApp dans les 24h</strong> pour démarrer la création de votre boutique en ligne.</p>
+      </div>
+      
+      <p class="sub" style="font-size:0.85rem">Préparez dès maintenant :</p>
+      <ul class="steps-list">
+        <li>Photos de vos produits (haute qualité)</li>
+        <li>Logo de votre boutique (si disponible)</li>
+        <li>Description de votre activité</li>
+        <li>Noms et prix de vos produits</li>
+        <li>Votre numéro WhatsApp confirmé</li>
+      </ul>
+      
+      <p class="sub" style="font-size:0.9rem; margin-top: 30px;">⏱️ <strong>Délai de création :</strong> 7 à 14 jours ouvrables</p>
+      
+      <a href="/" class="btn-home">← Retour à l'accueil</a>
+    </div>
+  </div>
+  <script>
+    const data = JSON.parse(sessionStorage.getItem('paymentSuccess'));
+    if (data) {
+      document.querySelector('h1').textContent = `Félicitations ${data.prenom} !`;
+      sessionStorage.removeItem('paymentSuccess');
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Paiement — W&K Creation</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.fedapay.com/checkout.js?v=1.1.7"></script>
+  <style>
+    :root {
+      --or: #C9A84C; --or-light: #E8C96A; --or-dark: #A07C2E;
+      --noir: #0D0D0D; --noir2: #141414; --noir3: #1E1E1E;
+      --blanc: #F5F0E8; --gris: #888; --gris2: #555;
+      --rouge: #E05252; --vert: #4CAF7D;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { background: var(--noir); color: var(--blanc); font-family: 'DM Sans', sans-serif; overflow-x: hidden; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; }
+    
+    .payment-container { max-width: 600px; width: 100%; }
+    .payment-header { text-align: center; margin-bottom: 50px; }
+    .payment-header h1 { font-family: 'Playfair Display', serif; font-size: 2rem; margin-bottom: 12px; }
+    .payment-header p { color: var(--gris); font-size: 1rem; line-height: 1.6; }
+    
+    .payment-card { background: var(--noir2); border: 1px solid rgba(201,168,76,0.2); padding: 40px; border-radius: 4px; }
+    .payment-info { background: rgba(201,168,76,0.06); border-left: 4px solid var(--or); padding: 20px; margin-bottom: 30px; }
+    .info-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+    .info-row:last-child { margin-bottom: 0; }
+    .info-label { color: var(--gris); font-size: 0.9rem; }
+    .info-value { color: var(--blanc); font-weight: 600; }
+    .info-amount { color: var(--or); font-family: 'Playfair Display', serif; font-size: 1.8rem; font-weight: 700; }
+    
+    .payment-method { margin-bottom: 24px; }
+    .payment-method label { display: block; margin-bottom: 8px; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 2px; color: var(--gris); font-weight: 500; }
+    
+    .btn-fedapay { width: 100%; padding: 16px; background: var(--vert); color: var(--blanc); border: none; font-family: 'DM Sans', sans-serif; font-weight: 700; font-size: 1rem; cursor: pointer; letter-spacing: 1px; text-transform: uppercase; transition: background 0.3s; margin-bottom: 12px; }
+    .btn-fedapay:hover { background: #3a9966; }
+    .btn-fedapay:disabled { opacity: 0.6; cursor: not-allowed; }
+    
+    .btn-back { width: 100%; padding: 16px; background: transparent; color: var(--gris); border: 1px solid rgba(255,255,255,0.1); font-family: 'DM Sans', sans-serif; font-weight: 700; font-size: 1rem; cursor: pointer; letter-spacing: 1px; text-transform: uppercase; transition: all 0.3s; }
+    .btn-back:hover { border-color: var(--or); color: var(--or); }
+    
+    .spinner { width: 16px; height: 16px; border: 2px solid rgba(255,255,255,0.3); border-top-color: var(--blanc); border-radius: 50%; animation: spin 0.7s linear infinite; display: inline-block; vertical-align: middle; margin-right: 8px; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    
+    .msg { margin-top: 16px; padding: 16px 20px; font-size: 0.92rem; line-height: 1.6; border-radius: 2px; display: none; }
+    .msg.warning { background: rgba(201,168,76,0.12); border: 1px solid rgba(201,168,76,0.4); color: var(--or); display: block; }
+    .msg.error { background: rgba(224,82,82,0.12); border: 1px solid rgba(224,82,82,0.4); color: var(--rouge); display: block; }
+    .msg.success { background: rgba(76,175,125,0.12); border: 1px solid rgba(76,175,125,0.4); color: var(--vert); display: block; }
+    
+    .logo { font-family: 'Playfair Display', serif; font-size: 1.2rem; font-weight: 900; color: var(--or); letter-spacing: 2px; text-decoration: none; margin-bottom: 30px; display: inline-block; }
+    
+    .form-group { margin-bottom: 16px; }
+    .form-group label { display: block; margin-bottom: 8px; font-size: 0.9rem; color: var(--gris); }
+    .form-group input { width: 100%; padding: 12px; background: rgba(255,255,255,0.05); border: 1px solid rgba(201,168,76,0.3); color: var(--blanc); font-family: 'DM Sans', sans-serif; font-size: 0.95rem; }
+    .form-group input:focus { outline: none; border-color: var(--or); background: rgba(255,255,255,0.08); }
+    
+    @media (max-width: 768px) {
+      .payment-card { padding: 24px; }
+      .payment-header h1 { font-size: 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="payment-container">
+    <a href="/" class="logo">W&K <span style="color:var(--blanc)">Creation</span></a>
+    
+    <div class="payment-header">
+      <h1>Finaliser votre paiement</h1>
+      <p>Complétez votre inscription en effectuant le paiement de votre abonnement mensuel.</p>
+    </div>
+    
+    <div class="payment-card">
+      <!-- FORMULAIRE PAIEMENT (si clientData existe) -->
+      <div id="paymentSection" style="display: none;">
+        <div class="payment-info">
+          <div class="info-row">
+            <span class="info-label">Client :</span>
+            <span class="info-value" id="nomDisplay">—</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">Plan :</span>
+            <span class="info-value" id="planDisplay">—</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">Montant :</span>
+            <span class="info-amount" id="amountDisplay">0 FCFA</span>
+          </div>
+        </div>
+        
+        <div class="payment-method">
+          <label>Choisissez votre moyen de paiement</label>
+          <button class="btn-fedapay" id="paymentBtn" onclick="initiatePayment()">💳 Payer avec FedaPay</button>
+        </div>
+        
+        <button class="btn-back" onclick="goBack()">← Retour</button>
+      </div>
+
+      <!-- MESSAGE SI SESSION PERDUE -->
+      <div id="dataEntrySection" style="display: none;">
+        <p style="color: var(--gris); text-align: center; margin-bottom: 24px;">Vos données de session ont expiré.</p>
+        <button class="btn-back" onclick="window.location.href='index.html'">← Recommencer l'inscription</button>
+      </div>
+      
+      <div class="msg" id="msgBox"></div>
+    </div>
+  </div>
+
+  <script>
+    const API_BASE_URL = 'http://localhost:3000';
+    let clientData = null;
+
+    // SUPABASE
+    const { createClient } = supabase;
+    const db = createClient(
+      'https://upaewkcazpvidzlwfttj.supabase.co',
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVwYWV3a2NhenB2aWR6bHdmdHRqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA3NzM3NTUsImV4cCI6MjA5NjM0OTc1NX0.7OfIH8gLg3sv4t6INFSap76_KN2Xixm39fDjAlh7X74'
+    );
+
+    function showMsg(txt, type) {
+      const box = document.getElementById('msgBox');
+      box.textContent = txt;
+      box.className = 'msg ' + type;
+    }
+
+    function goBack() {
+      window.history.back();
+    }
+
+    // INITIALISATION PAGE
+    window.addEventListener('load', function() {
+      clientData = JSON.parse(sessionStorage.getItem('clientData'));
+      
+      if (!clientData) {
+        document.getElementById('dataEntrySection').style.display = 'block';
+        document.getElementById('paymentSection').style.display = 'none';
+        return;
+      }
+
+      document.getElementById('paymentSection').style.display = 'block';
+      document.getElementById('dataEntrySection').style.display = 'none';
+      document.getElementById('nomDisplay').textContent = clientData.prenom + ' ' + (clientData.nom || '');
+      document.getElementById('planDisplay').textContent = clientData.plan.charAt(0).toUpperCase() + clientData.plan.slice(1);
+      document.getElementById('amountDisplay').textContent = Number(clientData.amount).toLocaleString('fr-CI') + ' FCFA';
+    });
+
+
+    // INITIER LE PAIEMENT FEDAPAY
+    async function initiatePayment() {
+      if (!clientData) {
+        showMsg('Données manquantes. Recommencez l\'inscription.', 'error');
+        return;
+      }
+
+      const btn = document.getElementById('paymentBtn');
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner"></span>Initialisation...';
+
+      try {
+        const response = await fetch(API_BASE_URL + '/api/create-transaction', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            email: clientData.email,
+            amount: clientData.amount,
+            plan: clientData.plan,
+            prenom: clientData.prenom
+          })
+        });
+
+        const result = await response.json();
+
+        if (!result.success) {
+          throw new Error(result.error || 'Erreur création transaction');
+        }
+
+        // Ouvrir le widget FedaPay
+        FedaPayCheckout.init({
+          public_key: 'pk_sandbox_EjwrZNUPBDWNDjT8leOjpyQu',
+          transaction: {
+            id: result.transaction.id,
+            token: result.transaction.token
+          },
+          onComplete: function(resp) {
+            if (resp.reason === FedaPayCheckout.COMPLETED) {
+              sessionStorage.setItem('paymentSuccess', JSON.stringify({
+                prenom: clientData.prenom,
+                plan: clientData.plan,
+                amount: clientData.amount,
+                transactionId: resp.transaction ? resp.transaction.id : result.transaction.id
+              }));
+              sessionStorage.removeItem('clientData');
+              window.location.href = 'confirmation.html';
+            } else {
+              btn.disabled = false;
+              btn.innerHTML = '💳 Payer avec FedaPay';
+              showMsg('Paiement annulé. Veuillez réessayer.', 'warning');
+            }
+          }
+        }).open();
+
+      } catch(err) {
+        btn.disabled = false;
+        btn.innerHTML = '💳 Payer avec FedaPay';
+        showMsg('❌ Erreur : ' + err.message, 'error');
+        console.error(err);
+      }
+    }
+  </script>
+</body>
+</html>
